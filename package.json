@@ -15,7 +15,8 @@
     "lint:styles": "stylelint ./src/**/*.css",
     "fix:styles": "stylelint --fix ./src/**/*.css",
     "lint:ts": "eslint src/**/*.{ts,tsx}",
-    "fix:ts": "eslint src/**/*.{ts,tsx} --quiet --fix"
+    "fix:ts": "eslint src/**/*.{ts,tsx} --quiet --fix",
+    "swagger-types": "npx openapi-typescript http://ovz1.j50031265.px7zm.vps.myjino.ru/swagger.json --output src/http/model/todo.swagger.ts && eslint src/http/model/todo.swagger.ts --fix --no-ignore"
   },
   "author": "",
   "license": "ISC",
@@ -50,7 +51,7 @@
     "cypress": "10.1.0",
     "dotenv": "16.0.1",
     "dotenv-expand": "8.0.3",
-    "esbuild-loader": "2.19.0",
+    "esbuild-loader": "^2.19.0",
     "eslint": "8.8.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-import-resolver-typescript": "^3.5.3",
@@ -113,13 +114,14 @@
     "tsconfig-paths-webpack-plugin": "^4.0.0",
     "typescript": "4.7.3",
     "web-vitals": "2.1.4",
-    "webpack": "5.73.0",
-    "webpack-cli": "4.9.2",
-    "webpack-dev-server": "4.9.2",
+    "webpack": "^5.77.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.13.2",
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@hookform/resolvers": "2.9.9",
+    "3": "^2.1.0",
+    "@hookform/resolvers": "^2.9.9",
     "@mui/material": "5.10.9",
     "@mui/system": "5.10.9",
     "@mui/x-data-grid": "5.17.7",
@@ -127,14 +129,14 @@
     "axios": "1.1.3",
     "date-fns": "2.29.3",
     "eslint-webpack-plugin": "^3.2.0",
-    "mobx": "6.6.2",
-    "mobx-react": "7.5.3",
+    "mobx": "^6.6.2",
+    "mobx-react": "^7.5.3",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-hook-form": "7.37.0",
+    "react-hook-form": "^7.37.0",
     "react-router-dom": "6.3.0",
     "reflect-metadata": "0.1.13",
     "sanitize.css": "13.0.0",
-    "yup": "0.32.11"
+    "yup": "^0.32.11"
   }
 }

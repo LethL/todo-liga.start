@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEventHandler } from 'react';
 import { TextFieldProps } from './TextField.types';
 import './TextField.css';
 
@@ -10,7 +10,9 @@ export function TextField({
   value,
   onChange,
   errorText,
+  className,
 }: TextFieldProps) {
+  const onInputChangeValue: ChangeEventHandler<HTMLInputElement> = (evt) => onChange(evt.target.value);
   return (
     <div className={`mb-3 ${containerClassName}`}>
       <label htmlFor={label} className="form-label">
@@ -18,11 +20,11 @@ export function TextField({
       </label>
       <input
         type={inputType}
-        className="form-control"
+        className={`form-control ${className}`}
         id={label}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={onInputChangeValue}
       />
       {errorText && <div className="invalid">{errorText}</div>}
     </div>
