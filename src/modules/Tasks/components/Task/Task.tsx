@@ -5,9 +5,9 @@ import './Task.css';
 import { EDIT, ROOT } from 'constants/index';
 
 export function Task({ task, handleTaskComplete, handleTaskImportance, handleTaskDelete }: TaskProps) {
-  const { name, info, isImportant, isDone, id } = task;
+  const { name, info, isImportant, isCompleted, id } = task;
 
-  const onTaskComplete = () => handleTaskComplete(id, isDone);
+  const onTaskComplete = () => handleTaskComplete(id, isCompleted);
 
   const onTaskImportance = () => handleTaskImportance(id, isImportant);
 
@@ -17,7 +17,7 @@ export function Task({ task, handleTaskComplete, handleTaskImportance, handleTas
     <div>
       <div className="task mb-2">
         <p
-          className={`task__label ${isDone ? 'text-decoration-line-through text-secondary' : ''} ${
+          className={`task__label ${isCompleted ? 'text-decoration-line-through text-secondary' : ''} ${
             isImportant ? 'text-success fw-bold' : ''
           }`}>
           {name}
@@ -29,14 +29,14 @@ export function Task({ task, handleTaskComplete, handleTaskImportance, handleTas
             className={`task__btn btn ${
               isImportant ? 'btn-success' : 'btn-outline-success'
             } btn-sm float-right btn-important`}
-            disabled={isDone}
+            disabled={isCompleted}
             onClick={onTaskImportance}>
             <i className="fa fa-exclamation" />
           </button>
 
           <button
             type="button"
-            className={`task__btn btn ${isDone ? 'btn-danger' : 'btn-outline-danger'} btn-sm float-right`}
+            className={`task__btn btn ${isCompleted ? 'btn-danger' : 'btn-outline-danger'} btn-sm float-right`}
             onClick={onTaskComplete}>
             <i className="fa fa-check" />
           </button>
@@ -54,7 +54,7 @@ export function Task({ task, handleTaskComplete, handleTaskImportance, handleTas
         </div>
       </div>
       <p
-        className={`${isDone ? 'text-decoration-line-through text-secondary' : ''} ${
+        className={`${isCompleted ? 'text-decoration-line-through text-secondary' : ''} ${
           isImportant ? 'text-success fw-bold' : ''
         }`}>
         {info}

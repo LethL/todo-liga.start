@@ -1,6 +1,7 @@
-import { action, computed, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 import React from 'react';
 import { AddTaskEntity } from 'domains/Task.entity';
+import { TasksAgentRequest } from 'http/agent';
 
 type PrivateFields = '_loading';
 
@@ -15,18 +16,25 @@ class AddTaskFormProto {
     });
   }
 
-  _loading = false;
+  private _loading = false;
 
   get loading(): boolean {
     return this._loading;
   }
 
-  handleAddTask = async (data?: AddTaskEntity) => {
-    this._loading = true;
-    console.log(data);
-    setTimeout(() => {
-      this._loading = false;
-    }, 300);
+  handleAddTask = async (taskData?: AddTaskEntity) => {
+    runInAction(() => {
+      this._loading = true;
+    });
+    try {
+      await TasksAgentRequest.addTaskRequest(taskData);
+    } catch {
+      if (!taskData) return null;
+    } finally {
+      runInAction(() => {
+        this._loading = false;
+      });
+    }
   };
 }
 

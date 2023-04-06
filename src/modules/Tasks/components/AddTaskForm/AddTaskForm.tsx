@@ -21,26 +21,23 @@ function AddTaskFormProto() {
   });
 
   const onChangeTaskName = (value: string) => {
-    setValue('taskName', value);
+    setValue('name', value);
   };
 
   const onChangeTaskDescr = (value: string) => {
-    setValue('taskDescription', value);
+    setValue('info', value);
   };
 
   const onTaskImportantCheck = (value: boolean) => {
-    setValue('taskIsImportant', value === false ? false : true);
+    setValue('isImportant', value === false ? false : true);
   };
 
   const onSubmit = () => {
     handleSubmit(async (data: AddTaskEntity) => {
       handleAddTask(data);
       reset();
-    })();
-
-    setTimeout(() => {
       return navigate('/');
-    }, 300);
+    })();
   };
 
   return (
@@ -48,7 +45,7 @@ function AddTaskFormProto() {
       <Loader isLoading={loading}>
         <Controller
           control={control}
-          name="taskName"
+          name="name"
           render={({ field, fieldState: { error } }) => (
             <TextField
               label="Task name"
@@ -62,7 +59,7 @@ function AddTaskFormProto() {
           )}></Controller>
         <Controller
           control={control}
-          name="taskDescription"
+          name="info"
           render={({ field, fieldState: { error } }) => (
             <TextField
               label="What to do description"
@@ -76,7 +73,7 @@ function AddTaskFormProto() {
           )}></Controller>
         <Controller
           control={control}
-          name="taskIsImportant"
+          name="isImportant"
           render={({ field }) => (
             <Checkbox label="Important" checked={field.value} onChange={onTaskImportantCheck} />
           )}></Controller>

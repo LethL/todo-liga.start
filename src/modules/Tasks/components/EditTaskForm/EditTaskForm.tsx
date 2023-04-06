@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,43 +13,46 @@ import { validationSchema } from 'helpers/validationSchema';
 import { EditTaskEntity } from 'domains/Task.entity';
 
 function EditTaskFormProto() {
-  const { handleEditTask, loading, task } = EditTaskFormStore;
-  const { taskId } = useParams();
+  const { handleEditTask, loading, task, getTask } = EditTaskFormStore;
+  const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
-  const { control, setValue, reset, handleSubmit, watch } = useForm({
+  const { control, setValue, handleSubmit, watch } = useForm({
     defaultValues: DEFAULT_VALUES,
     resolver: yupResolver(validationSchema),
   });
 
   useEffect(() => {
-    task();
+    getTask(`${taskId}`);
   }, []);
 
+  useEffect(() => {
+    setValue('name', task.name);
+    setValue('info', task.info);
+    setValue('isImportant', task.isImportant);
+    setValue('isCompleted', task.isCompleted);
+  }, [task.name, task.info, task.isImportant, task.isCompleted]);
+
   const onChangeTaskName = (value: string) => {
-    setValue('taskName', value);
+    setValue('name', value);
   };
 
   const onChangeTaskDescr = (value: string) => {
-    setValue('taskDescription', value);
+    setValue('info', value);
   };
 
   const onTaskImportantCheck = (value: boolean) => {
-    setValue('taskIsImportant', value === false ? false : true);
+    setValue('isImportant', value === false ? false : true);
   };
 
   const onTaskCompletedCheck = (value: boolean) => {
-    setValue('taskIsDone', value === false ? false : true);
+    setValue('isCompleted', value === false ? false : true);
   };
 
   const onSubmit = async () => {
     handleSubmit(async (data: EditTaskEntity) => {
-      await handleEditTask(data);
-      reset();
-    })();
-
-    setTimeout(() => {
+      await handleEditTask(`${taskId}`, data);
       return navigate('/');
-    }, 300);
+    })();
   };
 
   return (
@@ -59,11 +62,11 @@ function EditTaskFormProto() {
         <Loader isLoading={loading}>
           <Controller
             control={control}
-            name="taskName"
+            name="name"
             render={({ field, fieldState: { error } }) => (
               <TextField
                 label="Task name"
-                placeholder="Clean room"
+                placeholder={task.name}
                 inputType={'text'}
                 onChange={onChangeTaskName}
                 value={field.value}
@@ -73,11 +76,11 @@ function EditTaskFormProto() {
             )}></Controller>
           <Controller
             control={control}
-            name="taskDescription"
+            name="info"
             render={({ field, fieldState: { error } }) => (
               <TextField
                 label="What to do description"
-                placeholder="Clean my room"
+                placeholder={task.info}
                 inputType={'text'}
                 onChange={onChangeTaskDescr}
                 value={field.value}
@@ -87,18 +90,18 @@ function EditTaskFormProto() {
             )}></Controller>
           <Controller
             control={control}
-            name="taskIsImportant"
+            name="isImportant"
             render={({ field }) => (
               <Checkbox
                 label="Important"
                 checked={field.value}
                 onChange={onTaskImportantCheck}
-                disabled={watch('taskIsDone')}
+                disabled={watch('isCompleted')}
               />
             )}></Controller>
           <Controller
             control={control}
-            name="taskIsDone"
+            name="isCompleted"
             render={({ field }) => (
               <Checkbox label="Completed" checked={field.value} onChange={onTaskCompletedCheck} />
             )}></Controller>

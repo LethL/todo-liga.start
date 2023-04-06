@@ -5,7 +5,7 @@ import { StatusFilter } from '../StatusFilter';
 import { DEFAULT_VALUES } from './SearchForm.utils';
 import { SearchInput } from 'components/index';
 import { FiltersType } from 'domains/index';
-import TaskStore from 'modules/Tasks/store/Tasks.store';
+import { TaskStore } from 'modules/Tasks/store/Tasks.store';
 import './SearchForm.css';
 
 function SearchFormProto() {

@@ -1,11 +1,9 @@
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
-import React from 'react';
 import { TaskEntity, TaskSearchEntity, TasksStatsEntity } from 'domains/Task.entity';
-import { TasksMock } from '__mocks__/Tasks.mock';
 import { TasksAgentRequest } from 'http/agent';
-import { mapToExternalParams, mapToInternalTasks } from 'helpers/mappers';
+import { getInternalInfo, mapToExternalParams, mapToInternalTasks } from 'helpers/mappers';
 
-type PrivateFields = '_loading' | '_tasks';
+type PrivateFields = '_loading' | '_tasks' | '_taskStats' | '_searchForm';
 
 class TasksStoreProto {
   constructor() {
@@ -13,10 +11,12 @@ class TasksStoreProto {
       _tasks: observable,
       _loading: observable,
       _taskStats: observable,
+      _searchForm: observable,
 
       tasks: computed,
       loading: computed,
 
+      updateTask: action,
       handleTaskComplete: action,
       handleTaskImportance: action,
       handleTaskDelete: action,
@@ -35,50 +35,121 @@ class TasksStoreProto {
     return this._tasks;
   }
 
-  _taskStats: TasksStatsEntity = {
-    total: 8,
-    important: 8,
-    done: 8,
+  private _taskStats: TasksStatsEntity | null = {
+    total: 0,
+    important: 0,
+    done: 0,
   };
 
-  get taskStats(): TasksStatsEntity {
+  get taskStats(): TasksStatsEntity | null {
     return this._taskStats;
   }
 
+  private _searchForm?: TaskSearchEntity = {
+    searchValue: '',
+    filterType: 'All',
+  };
+
   loadTasks = async (data?: TaskSearchEntity) => {
-    // this._loading = true;
-    // this._tasks = TasksMock;
     const externalSearchParams = mapToExternalParams(data);
     const res = await TasksAgentRequest.getAllTasksRequest(externalSearchParams);
     runInAction(() => {
       this._tasks = mapToInternalTasks(res);
+      this._taskStats = getInternalInfo(res);
     });
-    // if (data) {
-    //   console.log(data);
-    // }
-    // setTimeout(() => {
-    //   this._loading = false;
-    // }, 300);
+    return {
+      tasks: mapToInternalTasks(res),
+      tasksStats: getInternalInfo(res),
+    };
   };
 
-  handleTaskComplete = (id: TaskEntity['id'], status: boolean) => {
-    this._loading = true;
-    console.log(id, !status);
-    // this.loadTasks();
+  updateTask = async (data?: TaskSearchEntity) => {
+    runInAction(() => {
+      this._loading = true;
+    });
+    try {
+      if (data) this._searchForm = data;
+      const { tasks, tasksStats } = await this.loadTasks(this._searchForm);
+      this._tasks = tasks;
+      this._taskStats = tasksStats;
+    } catch {
+      this._tasks = null;
+      this._taskStats = null;
+    } finally {
+      runInAction(() => {
+        this._loading = false;
+      });
+    }
   };
 
-  handleTaskImportance = (id: TaskEntity['id'], status: boolean) => {
-    this._loading = true;
-    console.log(id, !status);
-    // this.loadTasks();
+  handleTaskComplete = async (id: TaskEntity['id'], status: boolean) => {
+    runInAction(() => {
+      this._loading = true;
+    });
+    try {
+      await TasksAgentRequest.updateTaskRequest(id, {
+        isCompleted: !status,
+        isImportant: status ? undefined : false,
+      });
+      const { tasks, tasksStats } = await this.loadTasks(this._searchForm);
+      runInAction(() => {
+        this._tasks = tasks;
+        this._taskStats = tasksStats;
+      });
+    } catch {
+      this._tasks = null;
+      this._taskStats = null;
+    } finally {
+      runInAction(() => {
+        this._loading = false;
+      });
+    }
   };
 
-  handleTaskDelete = (id: TaskEntity['id']) => {
-    this._loading = true;
-    console.log('task', id, 'deleted');
-    // this.loadTasks();
+  handleTaskImportance = async (id: TaskEntity['id'], status: boolean) => {
+    runInAction(() => {
+      this._loading = true;
+    });
+    try {
+      await TasksAgentRequest.updateTaskRequest(id, {
+        isImportant: !status,
+        isCompleted: status ? undefined : false,
+      });
+      const { tasks, tasksStats } = await this.loadTasks(this._searchForm);
+      runInAction(() => {
+        this._tasks = tasks;
+        this._taskStats = tasksStats;
+      });
+    } catch {
+      this._tasks = null;
+      this._taskStats = null;
+    } finally {
+      runInAction(() => {
+        this._loading = false;
+      });
+    }
+  };
+
+  handleTaskDelete = async (id: TaskEntity['id']) => {
+    runInAction(() => {
+      this._loading = true;
+    });
+    try {
+      await TasksAgentRequest.deleteTaskRequest(id);
+      const { tasks, tasksStats } = await this.loadTasks(this._searchForm);
+      runInAction(() => {
+        this._tasks = tasks;
+        this._taskStats = tasksStats;
+      });
+    } catch {
+      this._tasks = null;
+      this._taskStats = null;
+    } finally {
+      runInAction(() => {
+        this._loading = false;
+      });
+    }
   };
 }
 
-const TaskStore = new TasksStoreProto();
-export default TaskStore;
+export const TaskStore = new TasksStoreProto();
