@@ -1,16 +1,16 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Box, CircularProgress } from '@mui/material';
 import { AddTaskFormStore } from './store/AddTaskForm.store';
 import { DEFAULT_VALUES } from './AddTaskForm.utils';
-import { TextField } from 'components/TextField';
+import { TextFieldElement } from 'components/TextField';
 import { Checkbox } from 'components/Checkbox';
-import { PATH_LIST } from 'constants/paths';
-import { Loader } from 'components/Loader';
 import { AddTaskEntity } from 'domains/Task.entity';
 import { validationSchema } from 'helpers/validationSchema';
+import { FormBtns } from 'components/FormBtns/FormBtns';
 
 function AddTaskFormProto() {
   const { handleAddTask, loading } = AddTaskFormStore;
@@ -36,57 +36,56 @@ function AddTaskFormProto() {
     handleSubmit(async (data: AddTaskEntity) => {
       handleAddTask(data);
       reset();
-      return navigate('/');
+      setTimeout(() => {
+        navigate('/');
+      }, 1);
     })();
   };
 
   return (
-    <form className="tasks-wrapper d-flex flex-column" onSubmit={handleSubmit(onSubmit)}>
-      <Loader isLoading={loading}>
-        <Controller
-          control={control}
-          name="name"
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              label="Task name"
-              placeholder="Clean room"
-              inputType={'text'}
-              onChange={onChangeTaskName}
-              value={field.value}
-              errorText={error?.message}
-              className={`form-control ${error?.message ? 'is-invalid' : ''}`}
-            />
-          )}></Controller>
-        <Controller
-          control={control}
-          name="info"
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              label="What to do description"
-              placeholder="Clean my room"
-              inputType={'text'}
-              onChange={onChangeTaskDescr}
-              value={field.value}
-              errorText={error?.message}
-              className={`form-control ${error?.message ? 'is-invalid' : ''}`}
-            />
-          )}></Controller>
-        <Controller
-          control={control}
-          name="isImportant"
-          render={({ field }) => (
-            <Checkbox label="Important" checked={field.value} onChange={onTaskImportantCheck} />
-          )}></Controller>
-        <div className="search-form d-flex justify-content-between">
-          <Link className="btn btn-primary d-block w-25" to={PATH_LIST.ROOT}>
-            Go Back
-          </Link>
-          <button className="btn btn-primary d-block w-25" type="submit">
-            Add Task
-          </button>
-        </div>
-      </Loader>
-    </form>
+    <Box component={'form'} display={'flex'} flexDirection={'column'} onSubmit={handleSubmit(onSubmit)}>
+      {loading === true ? (
+        <CircularProgress style={{ marginLeft: '50%' }} />
+      ) : (
+        <>
+          <Controller
+            control={control}
+            name="name"
+            render={({ field, fieldState: { error } }) => (
+              <TextFieldElement
+                label="Task name"
+                placeholder="Clean room"
+                inputType={'text'}
+                onChange={onChangeTaskName}
+                value={field.value}
+                errorText={error?.message}
+                className={`form-control ${error?.message ? 'is-invalid' : ''}`}
+              />
+            )}></Controller>
+          <Controller
+            control={control}
+            name="info"
+            render={({ field, fieldState: { error } }) => (
+              <TextFieldElement
+                label="What to do description"
+                placeholder="Clean my room"
+                inputType={'text'}
+                onChange={onChangeTaskDescr}
+                value={field.value}
+                errorText={error?.message}
+                className={`form-control ${error?.message ? 'is-invalid' : ''}`}
+              />
+            )}></Controller>
+          <Controller
+            control={control}
+            name="isImportant"
+            render={({ field }) => (
+              <Checkbox label="Important" checked={field.value} onChange={onTaskImportantCheck} />
+            )}></Controller>
+          <FormBtns />
+        </>
+      )}
+    </Box>
   );
 }
 

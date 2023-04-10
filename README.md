@@ -7,7 +7,7 @@ https://todo-liga-internship.vercel.app/
 ## Технологии которые используются в проекте
 
 React, React-router-dom, Typescript, MobX, Axios, React Hook Form, Yup
-Webpack, eslint, prettier
+Webpack, eslint, prettier, Material UI
 
 ## Структура шаблона
 

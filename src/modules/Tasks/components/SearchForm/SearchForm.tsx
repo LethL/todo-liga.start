@@ -1,12 +1,13 @@
 import React, { MouseEvent } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Controller, useForm } from 'react-hook-form';
+import { Button } from '@mui/material';
 import { StatusFilter } from '../StatusFilter';
 import { DEFAULT_VALUES } from './SearchForm.utils';
+import { SearchFormWrapper } from './SearchForm.styles';
 import { SearchInput } from 'components/index';
 import { FiltersType } from 'domains/index';
 import { TaskStore } from 'modules/Tasks/store/Tasks.store';
-import './SearchForm.css';
 
 function SearchFormProto() {
   const { loading, loadTasks } = TaskStore;
@@ -34,7 +35,7 @@ function SearchFormProto() {
   };
 
   return (
-    <form className="search-form d-flex justify-content-between">
+    <SearchFormWrapper component={'form'}>
       <Controller
         control={control}
         name="searchValue"
@@ -47,10 +48,10 @@ function SearchFormProto() {
         render={({ field }) => (
           <StatusFilter disabled={loading} tasksType={field.value} onChange={onFilterChange} />
         )}></Controller>
-      <button type="submit" className="btn btn-primary" onClick={onSubmit} disabled={loading}>
+      <Button type="submit" variant="contained" onClick={onSubmit} disabled={loading}>
         Find
-      </button>
-    </form>
+      </Button>
+    </SearchFormWrapper>
   );
 }
 

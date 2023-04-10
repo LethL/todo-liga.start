@@ -1,11 +1,11 @@
 import React, { ChangeEventHandler } from 'react';
+import { Box, Typography, TextField } from '@mui/material';
 import { TextFieldProps } from './TextField.types';
-import './TextField.css';
+import { TextFieldLabel } from './TextField.styles';
 
-export function TextField({
+export function TextFieldElement({
   label,
   placeholder,
-  containerClassName = '',
   inputType,
   value,
   onChange,
@@ -14,11 +14,9 @@ export function TextField({
 }: TextFieldProps) {
   const onInputChangeValue: ChangeEventHandler<HTMLInputElement> = (evt) => onChange(evt.target.value);
   return (
-    <div className={`mb-3 ${containerClassName}`}>
-      <label htmlFor={label} className="form-label">
-        {label}
-      </label>
-      <input
+    <Box margin={'1em 0'}>
+      <TextFieldLabel className="form-label">{label}</TextFieldLabel>
+      <TextField
         type={inputType}
         className={`form-control ${className}`}
         id={label}
@@ -26,7 +24,11 @@ export function TextField({
         value={value}
         onChange={onInputChangeValue}
       />
-      {errorText && <div className="invalid">{errorText}</div>}
-    </div>
+      {errorText && (
+        <Typography variant="caption" color={'red'} mt={'#dc3545'}>
+          {errorText}
+        </Typography>
+      )}
+    </Box>
   );
 }

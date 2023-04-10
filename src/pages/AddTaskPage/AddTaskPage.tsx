@@ -1,11 +1,12 @@
 import React from 'react';
+import { Typography } from '@mui/material';
 import { PageContainer } from 'components/index';
 import { AddTaskForm } from 'modules/Tasks/components/AddTaskForm';
 
 export function AddTaskPage() {
   return (
     <PageContainer>
-      <h1 className="text-primary text-center blue text-uppercase">TODO LIST | ADD TASK</h1>
+      <Typography variant="h1">TODO LIST | ADD TASK</Typography>
       <AddTaskForm />
     </PageContainer>
   );

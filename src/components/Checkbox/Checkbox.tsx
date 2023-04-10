@@ -1,22 +1,21 @@
 import React, { ChangeEventHandler } from 'react';
+import { FormLabel, Box } from '@mui/material';
 import { CheckboxProps } from './Checkbox.types';
+import { CheckboxElement } from './Checkbox.styles';
 
-export function Checkbox({ label, checked, onChange, disabled, containerClassName = '' }: CheckboxProps) {
+export function Checkbox({ label, checked, onChange, disabled }: CheckboxProps) {
   const onCheckboxChange: ChangeEventHandler<HTMLInputElement> = (evt) => onChange(evt.target.checked);
   return (
-    <div className={`form-check mb-3 ${containerClassName}`}>
-      <input
+    <Box display={'flex'} alignItems={'center'} mb={'0.5em'}>
+      <CheckboxElement
         className="form-check-input"
-        type="checkbox"
         value=""
         id={label}
         disabled={disabled}
         checked={checked}
         onChange={onCheckboxChange}
       />
-      <label className="form-check-label" htmlFor={label}>
-        {label}
-      </label>
-    </div>
+      <FormLabel>{label}</FormLabel>
+    </Box>
   );
 }

@@ -1,7 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Box, Button, Typography } from '@mui/material';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import DoneIcon from '@mui/icons-material/Done';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
 import { TaskProps } from './Task.types';
-import './Task.css';
+import {
+  TaskBox,
+  TaskBtnsBox,
+  TaskDeleteBtn,
+  TaskImportantBtn,
+  TaskIsDeleteBtn,
+  TaskIsImportantBtn,
+  TaskTextDone,
+  TaskTextImportant,
+} from './Task.styles';
 import { EDIT, ROOT } from 'constants/index';
 
 export function Task({ task, handleTaskComplete, handleTaskImportance, handleTaskDelete }: TaskProps) {
@@ -14,51 +28,63 @@ export function Task({ task, handleTaskComplete, handleTaskImportance, handleTas
   const onTaskDelete = () => handleTaskDelete(id);
 
   return (
-    <div>
-      <div className="task mb-2">
-        <p
-          className={`task__label ${isCompleted ? 'text-decoration-line-through text-secondary' : ''} ${
-            isImportant ? 'text-success fw-bold' : ''
-          }`}>
-          {name}
-        </p>
+    <Box>
+      <TaskBox>
+        {isCompleted === true ? (
+          <TaskTextDone variant="h6">{name}</TaskTextDone>
+        ) : isImportant === true ? (
+          <TaskTextImportant variant="h6">{name}</TaskTextImportant>
+        ) : (
+          <Typography variant="h6">{name}</Typography>
+        )}
 
-        <div className="task__btns">
-          <button
-            type="button"
-            className={`task__btn btn ${
-              isImportant ? 'btn-success' : 'btn-outline-success'
-            } btn-sm float-right btn-important`}
-            disabled={isCompleted}
-            onClick={onTaskImportance}>
-            <i className="fa fa-exclamation" />
-          </button>
+        <TaskBtnsBox>
+          {isImportant === true ? (
+            <TaskIsImportantBtn type="button" disabled={isCompleted} onClick={onTaskImportance}>
+              <PriorityHighIcon />
+            </TaskIsImportantBtn>
+          ) : (
+            <TaskImportantBtn type="button" disabled={isCompleted} onClick={onTaskImportance}>
+              <PriorityHighIcon />
+            </TaskImportantBtn>
+          )}
 
-          <button
-            type="button"
-            className={`task__btn btn ${isCompleted ? 'btn-danger' : 'btn-outline-danger'} btn-sm float-right`}
-            onClick={onTaskComplete}>
-            <i className="fa fa-check" />
-          </button>
+          {isCompleted === true ? (
+            <TaskIsDeleteBtn type="button" onClick={onTaskComplete}>
+              <DoneIcon />
+            </TaskIsDeleteBtn>
+          ) : (
+            <TaskDeleteBtn type="button" onClick={onTaskComplete}>
+              <DoneIcon />
+            </TaskDeleteBtn>
+          )}
 
-          <button
-            type="button"
-            className="task__btn btn btn-outline-danger btn-sm float-right btn-delete"
-            onClick={onTaskDelete}>
-            <i className="fa fa-trash-o" />
-          </button>
+          <TaskDeleteBtn type="button" onClick={onTaskDelete}>
+            <DeleteForeverIcon />
+          </TaskDeleteBtn>
 
-          <Link className="task__btn btn btn-outline-secondary btn-sm float-right" to={`${ROOT}${EDIT}/${id}`}>
-            <i className="fa fa-pencil" />
-          </Link>
-        </div>
-      </div>
-      <p
-        className={`${isCompleted ? 'text-decoration-line-through text-secondary' : ''} ${
-          isImportant ? 'text-success fw-bold' : ''
-        }`}>
-        {info}
-      </p>
-    </div>
+          <Button
+            sx={{
+              maxWidth: 30,
+              display: 'flex',
+              minWidth: 'auto',
+              padding: '0.25rem 0.5rem',
+              border: '1px solid #0d6efd',
+            }}
+            component={Link}
+            to={`${ROOT}${EDIT}/${id}`}>
+            <EditIcon />
+          </Button>
+        </TaskBtnsBox>
+      </TaskBox>
+
+      {isCompleted === true ? (
+        <TaskTextDone variant="body2">{info}</TaskTextDone>
+      ) : isImportant === true ? (
+        <TaskTextImportant variant="body2">{info}</TaskTextImportant>
+      ) : (
+        <Typography variant="body2">{info}</Typography>
+      )}
+    </Box>
   );
 }
